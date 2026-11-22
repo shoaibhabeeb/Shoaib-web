@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Screen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Poppins:wght@100..900&family=Fira+Code:wght@300..700&family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @import "tailwindcss";
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-tertiary: var(--tertiary);
+        --color-tertiary-foreground: var(--tertiary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-destructive-foreground: var(--destructive-foreground);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-popover: var(--popover);
+        --color-popover-foreground: var(--popover-foreground);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --font-family-sans: var(--font-sans);
+        --font-family-heading: var(--font-heading);
+        --font-family-mono: var(--font-mono);
+        /* Tailwind v4's font namespace is --font-*, NOT --font-family-*.
+         *
+         * Without this line the font-heading utility does not exist at all,
+         * so every h1–h6 the design prompt mandates (font-heading) silently
+         * inherited the body's font-sans. A user could set --font-heading a
+         * dozen times, watch the tool report success, and never see the
+         * typeface change — the "font applied but not reflected" report.
+         *
+         * font-sans and font-mono are Tailwind built-ins and already read
+         * :root, which is why only headings were broken. The fallback chain
+         * keeps themes that never set a heading font rendering the body face
+         * instead of nothing. */
+        --font-heading: var(--font-heading, var(--font-sans, ui-sans-serif, system-ui, sans-serif));
+      }
+
+      /* Every filled surface carries its own text colour.
+       *
+       * Without this, <div class="bg-accent"> inherits --foreground from
+       * <html> — a colour chosen to contrast the PAGE, not the accent fill. On
+       * a dark theme with a bright accent that renders near-white text on
+       * near-white (or near-black on near-black): the invisible text users
+       * report. Pairing each fill with its own foreground makes the readable
+       * result the default instead of something the model has to remember.
+       *
+       * These sit in @layer base deliberately. Any explicit text-* utility is
+       * in @layer utilities and therefore still wins, so an intentional colour
+       * choice is never overridden. The neutral surfaces (background, muted)
+       * are left out: --foreground is already guaranteed readable on those, and
+       * forcing --muted-foreground would wash out headings in muted panels.
+       */
+      @layer base {
+        .bg-card { color: var(--card-foreground); }
+        .bg-popover { color: var(--popover-foreground, var(--card-foreground)); }
+        .bg-primary { color: var(--primary-foreground); }
+        .bg-secondary { color: var(--secondary-foreground); }
+        .bg-accent { color: var(--accent-foreground, var(--foreground)); }
+        .bg-tertiary { color: var(--tertiary-foreground, var(--primary-foreground)); }
+        .bg-destructive { color: var(--destructive-foreground, var(--primary-foreground)); }
+      }
+      :root {
+        --background: #060709;
+        --foreground: #F4F0E7;
+        --primary: #B9945A;
+        --primary-foreground: #060709;
+        --secondary: #202021;
+        --secondary-foreground: #F4F0E7;
+        --tertiary: #466E7F;
+        --muted: #202021;
+        --muted-foreground: #C6C6B9;
+        --accent: #F0F0F0;
+        --accent-foreground: #131313;
+        --card: #202021;
+        --card-foreground: #F4F0E7;
+        --destructive: #D65D4A;
+        --border: #5A5349;
+        --input: #5A5349;
+        --ring: #B9945A;
+        --radius: 0.5rem;
+        --font-sans: Inter, sans-serif;
+        --font-heading: Playfair Display, Georgia, serif;
+        --font-mono: JetBrains Mono, monospace;
+        --shadow-offset-x: 0;
+        --shadow-offset-y: 10;
+        --shadow-blur: 30;
+        --shadow-spread: -8;
+        --shadow-color: rgba(15, 23, 42, 0.12);
+        --tertiary-foreground: #FFFFFF;
+        --destructive-foreground: #1E1B15;
+        --primary-text: #B9945A;
+        --secondary-text: #868788;
+        --tertiary-text: #648D9E;
+        --accent-text: #F0F0F0;
+        --destructive-text: #DB614E;
+        }
+    </style>
+    <style>
+      .brand-gradient { background-image: linear-gradient(135deg, var(--primary), var(--accent)); }
+      .shadow-theme {
+        box-shadow:
+          calc(var(--shadow-offset-x, 0) * 1px) calc(var(--shadow-offset-y, 10) * 1px)
+          calc(var(--shadow-blur, 30) * 1px) calc(var(--shadow-spread, -8) * 1px)
+          var(--shadow-color, rgba(15, 23, 42, 0.12));
+      }
+
+      /* Brand colours used as TEXT resolve to a legibility-adjusted variant.
+       *
+       * --primary and friends are tuned to look right as FILLS; painted as text
+       * on the page they are routinely too light — a #16A34A "+8.4%" on a white
+       * card measures 3.3:1. The --*-text tokens are the same hue and chroma
+       * with lightness nudged just far enough to clear AA on the page and card
+       * surfaces, so fills keep the exact brand colour while text becomes
+       * readable.
+       *
+       * This block is intentionally UNLAYERED: unlayered declarations outrank
+       * every cascade layer, so these beat Tailwind's own text-* utilities. The
+       * var() fallbacks leave documents that predate the derived tokens
+       * rendering exactly as before.
+       */
+      .text-primary { color: var(--primary-text, var(--primary)); }
+      .text-secondary { color: var(--secondary-text, var(--secondary)); }
+      .text-tertiary { color: var(--tertiary-text, var(--tertiary)); }
+      .text-accent { color: var(--accent-text, var(--accent)); }
+      .text-destructive { color: var(--destructive-text, var(--destructive)); }
+    </style>
+  <link id="theme-fonts" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+  <body>
+<div class="min-h-screen w-full bg-background flex flex-col relative font-sans text-foreground">
+  <header class="relative border-b border-border">
+    <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-3 text-xs text-muted-foreground md:px-8">
+      <a href="tel:9312304964" class="flex items-center gap-2 hover:text-primary"><iconify-icon icon="lucide:phone" class="text-sm"></iconify-icon>9312304964</a>
+      <a href="mailto:advkhanshoaib@gmail.com" class="hidden items-center gap-2 sm:flex hover:text-primary"><iconify-icon icon="lucide:mail" class="text-sm"></iconify-icon>advshoaib@gmail.com</a>
+      <span class="hidden md:block">Delhi High Court · New Delhi</span>
+    </div>
+    <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-5 md:px-8">
+      <a href="#top" class="flex items-center gap-3" aria-label="The Chambers of Advocate Shoaib Khan">
+        <span class="flex h-11 w-11 items-center justify-center rounded-lg border border-primary font-heading text-lg font-bold text-primary">CS</span>
+        <span class="leading-tight"><span class="block font-heading text-base font-semibold tracking-wide">The Chambers of</span><span class="block text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Advocate Shoaib Khan</span></span>
+      </a>
+      <details class="relative">
+        <summary aria-label="Open site navigation" class="flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-lg border border-primary text-primary transition hover:bg-primary hover:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-ring"><iconify-icon icon="lucide:menu" class="text-xl"></iconify-icon><span class="sr-only">Open navigation menu</span></summary>
+        <nav aria-label="Page sections" class="absolute right-0 z-40 mt-3 w-64 rounded-xl border border-border bg-card p-3 text-card-foreground shadow-md">
+          <p class="px-3 pb-3 pt-1 font-heading text-sm font-semibold text-primary">Navigate the Chambers</p>
+          <div class="border-t border-border pt-2 text-sm">
+            <a href="#top" class="flex min-h-11 items-center gap-3 rounded-lg px-3 transition hover:bg-secondary hover:text-primary"><iconify-icon icon="lucide:house" class="text-base"></iconify-icon>Home</a>
+            <a href="#about" class="flex min-h-11 items-center gap-3 rounded-lg px-3 transition hover:bg-secondary hover:text-primary"><iconify-icon icon="lucide:info" class="text-base"></iconify-icon>About the Chambers</a>
+            <a href="#practice" class="flex min-h-11 items-center gap-3 rounded-lg px-3 transition hover:bg-secondary hover:text-primary"><iconify-icon icon="lucide:scale" class="text-base"></iconify-icon>Practice Areas</a>
+            <a href="#founder" class="flex min-h-11 items-center gap-3 rounded-lg px-3 transition hover:bg-secondary hover:text-primary"><iconify-icon icon="lucide:user" class="text-base"></iconify-icon>Founder</a>
+            <a href="#contact" class="flex min-h-11 items-center gap-3 rounded-lg px-3 transition hover:bg-secondary hover:text-primary"><iconify-icon icon="lucide:mail" class="text-base"></iconify-icon>Contact</a>
+          </div>
+          <a href="#contact" class="mt-3 flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Request a consultation <iconify-icon icon="lucide:arrow-right" class="text-base"></iconify-icon></a>
+        </nav>
+      </details>
+    </div>
+  </header>
+
+  <main id="top" class="flex-1">
+    <section class="border-b border-border">
+      <div class="mx-auto grid w-full max-w-6xl gap-10 px-5 py-16 md:px-8 lg:grid-cols-12 lg:items-end lg:py-24">
+        <div class="lg:col-span-7">
+          <p class="mb-5 flex items-center gap-3 text-xs uppercase tracking-[0.22em] text-primary"><span class="h-px w-9 bg-primary"></span>Delhi High Court Chambers</p>
+          <h1 class="max-w-3xl text-balance font-heading text-4xl font-bold leading-tight md:text-6xl">Strategic advocacy for matters that demand resolve.</h1>
+          <p class="mt-6 max-w-xl text-pretty leading-7 text-muted-foreground">Clear counsel and rigorous representation in criminal and civil litigation, constitutional remedies, and family disputes.</p>
+          <div class="mt-8 flex flex-wrap gap-3"><a href="#contact" class="inline-flex min-h-11 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground">Request a consultation <iconify-icon icon="lucide:arrow-right" class="text-base"></iconify-icon></a><a href="#practice" class="inline-flex min-h-11 items-center gap-2 rounded-lg border border-border px-5 text-sm font-medium hover:border-primary hover:text-primary">Explore practice areas</a></div>
+        </div>
+        <div class="grid gap-3 lg:col-span-5">
+          <article class="rounded-xl border border-border bg-card p-5 shadow-md"><iconify-icon icon="lucide:shield" class="text-2xl text-primary"></iconify-icon><h2 class="mt-4 text-lg font-heading font-semibold">Criminal Defence</h2><p class="mt-2 text-sm leading-6 text-muted-foreground">Bail, trial strategy, anticipatory relief and appellate representation.</p></article>
+          <article class="rounded-xl border border-border bg-card p-5 shadow-md"><iconify-icon icon="lucide:scale" class="text-2xl text-primary"></iconify-icon><h2 class="mt-4 text-lg font-heading font-semibold">Civil &amp; Constitutional</h2><p class="mt-2 text-sm leading-6 text-muted-foreground">Civil disputes, writ petitions and urgent judicial remedies.</p></article>
+          <article class="rounded-xl border border-border bg-card p-5 shadow-md"><iconify-icon icon="lucide:heart" class="text-2xl text-primary"></iconify-icon><h2 class="mt-4 text-lg font-heading font-semibold">Matrimonial Matters</h2><p class="mt-2 text-sm leading-6 text-muted-foreground">Discreet counsel in family disputes, maintenance and related proceedings.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="bg-secondary">
+      <div class="mx-auto grid w-full max-w-6xl gap-10 px-5 py-16 md:px-8 lg:grid-cols-2 lg:py-20">
+        <div><p class="text-xs uppercase tracking-[0.22em] text-primary">About the Chambers</p><h2 class="mt-4 max-w-lg text-balance text-3xl font-heading font-semibold leading-tight">Focused representation, measured advice.</h2></div>
+        <div><p class="text-pretty leading-7 text-muted-foreground">The Chambers of Advocate Shoaib Khan represents individuals and businesses navigating high-stakes disputes. Every brief is approached with attention to facts, disciplined preparation and practical legal strategy.</p><p class="mt-4 text-pretty leading-7 text-muted-foreground">Based at the Delhi High Court, the practice is built on direct access, confidentiality and clear communication from first conference through final hearing.</p><a href="#contact" class="mt-7 inline-flex min-h-11 items-center gap-2 rounded-lg border border-primary px-5 text-sm font-medium text-primary hover:bg-primary hover:text-primary-foreground">Discuss your matter <iconify-icon icon="lucide:arrow-right" class="text-base"></iconify-icon></a></div>
+      </div>
+    </section>
+
+    <section id="practice" class="bg-accent text-accent-foreground">
+      <div class="mx-auto w-full max-w-6xl px-5 py-16 md:px-8 lg:py-20">
+        <div class="max-w-2xl"><p class="text-xs uppercase tracking-[0.22em] text-accent-foreground">Areas of legal expertise</p><h2 class="mt-4 text-balance text-3xl font-heading font-semibold">Litigation counsel across critical disputes.</h2><p class="mt-3 text-pretty leading-7 text-accent-foreground">Practical, court-ready support shaped around the facts of your matter.</p></div>
+        <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <article class="rounded-xl border border-border bg-card p-6 text-card-foreground"><iconify-icon icon="lucide:shield" class="text-2xl text-primary"></iconify-icon><h3 class="mt-5 font-heading text-lg font-semibold">Criminal Litigation</h3><p class="mt-2 text-sm leading-6 text-muted-foreground">Defence, complaints, bail and trial representation.</p></article>
+          <article class="rounded-xl border border-border bg-card p-6 text-card-foreground"><iconify-icon icon="lucide:scale" class="text-2xl text-primary"></iconify-icon><h3 class="mt-5 font-heading text-lg font-semibold">Civil Litigation</h3><p class="mt-2 text-sm leading-6 text-muted-foreground">Property, injunctions, recovery and civil appeals.</p></article>
+          <article class="rounded-xl border border-border bg-card p-6 text-card-foreground"><iconify-icon icon="lucide:file" class="text-2xl text-primary"></iconify-icon><h3 class="mt-5 font-heading text-lg font-semibold">Writ Petitions</h3><p class="mt-2 text-sm leading-6 text-muted-foreground">Constitutional remedies and administrative challenges.</p></article>
+          <article class="rounded-xl border border-border bg-card p-6 text-card-foreground"><iconify-icon icon="lucide:heart" class="text-2xl text-primary"></iconify-icon><h3 class="mt-5 font-heading text-lg font-semibold">Matrimonial Litigation</h3><p class="mt-2 text-sm leading-6 text-muted-foreground">Divorce, maintenance, custody and domestic disputes.</p></article>
+          <article class="rounded-xl border border-border bg-card p-6 text-card-foreground"><iconify-icon icon="lucide:circle-check" class="text-2xl text-primary"></iconify-icon><h3 class="mt-5 font-heading text-lg font-semibold">Bail &amp; Trial Strategy</h3><p class="mt-2 text-sm leading-6 text-muted-foreground">Prompt relief, case preparation and courtroom advocacy.</p></article>
+          <article class="rounded-xl border border-border bg-card p-6 text-card-foreground"><iconify-icon icon="lucide:folder" class="text-2xl text-primary"></iconify-icon><h3 class="mt-5 font-heading text-lg font-semibold">Legal Opinions</h3><p class="mt-2 text-sm leading-6 text-muted-foreground">Clear opinions, notices and litigation risk assessment.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-background">
+      <div class="mx-auto grid w-full max-w-6xl gap-10 px-5 py-16 md:px-8 lg:grid-cols-12 lg:py-20">
+        <div class="lg:col-span-4"><p class="text-xs uppercase tracking-[0.22em] text-primary">Why the chambers</p><h2 class="mt-4 text-balance text-3xl font-heading font-semibold">A considered approach to every brief.</h2></div>
+        <div class="space-y-6 lg:col-span-8">
+          <div class="flex gap-5 border-b border-border pb-6"><span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary font-heading font-semibold text-primary-foreground">01</span><div><h3 class="font-heading text-lg font-semibold">Direct, founder-led attention</h3><p class="mt-1 leading-7 text-muted-foreground">Your matter is handled with personal involvement at each material stage.</p></div></div>
+          <div class="flex gap-5 border-b border-border pb-6"><span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary font-heading font-semibold text-primary-foreground">02</span><div><h3 class="font-heading text-lg font-semibold">Preparation before appearance</h3><p class="mt-1 leading-7 text-muted-foreground">Legal research, facts and forum strategy are aligned before the matter reaches court.</p></div></div>
+          <div class="flex gap-5"><span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary font-heading font-semibold text-primary-foreground">03</span><div><h3 class="font-heading text-lg font-semibold">Discreet and accountable counsel</h3><p class="mt-1 leading-7 text-muted-foreground">Confidential communication and transparent direction throughout the engagement.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="founder" class="bg-secondary">
+      <div class="mx-auto grid w-full max-w-6xl gap-9 px-5 py-16 md:px-8 lg:grid-cols-2 lg:items-center lg:py-20">
+        <div class="overflow-hidden rounded-xl border border-border bg-card shadow-md"><img src="https://uxmagic.blob.core.windows.net/public/project-documents/6b02c5096cd5d13a3db579b5/6b02cab14acb53a43c82a462/1795346086448-73f57b44-5a5ed615d11ece8190e84121b19f7bdf69faddf1ff5aebb0ee26100d75603b8b.png" alt="Advocate Shoaib Khan in formal legal attire" class="h-96 w-full object-cover object-top md:h-[540px]"></div>
+        <div><p class="text-xs uppercase tracking-[0.22em] text-primary">Founder</p><h2 class="mt-4 text-balance text-3xl font-heading font-semibold md:text-4xl">Advocate Shoaib Khan</h2><p class="mt-3 text-sm font-medium uppercase tracking-[0.16em] text-primary">Founder &amp; Sole Practitioner</p><p class="mt-6 text-pretty leading-7 text-muted-foreground">Advocate Shoaib Khan is a Delhi-based litigation practitioner with 5+ years of experience handling a broad range of matters before courts and legal forums. His practice is guided by careful preparation, direct client communication and a disciplined approach to advocacy.</p><p class="mt-4 text-pretty leading-7 text-muted-foreground">He has worked across criminal defence, civil litigation, writ petitions and matrimonial disputes, including bail, trial work and related legal remedies. Every instruction receives focused, founder-led attention from first consultation through the next appropriate step.</p><div class="mt-7 grid gap-3 sm:grid-cols-2"><div class="rounded-lg border border-border bg-background p-4"><iconify-icon icon="lucide:scale" class="text-xl text-primary"></iconify-icon><p class="mt-3 font-heading text-base font-semibold">Courtroom Practice</p><p class="mt-1 text-sm leading-6 text-muted-foreground">Criminal, civil and writ matters</p></div><div class="rounded-lg border border-border bg-background p-4"><iconify-icon icon="lucide:shield" class="text-xl text-primary"></iconify-icon><p class="mt-3 font-heading text-base font-semibold">Focused Counsel</p><p class="mt-1 text-sm leading-6 text-muted-foreground">Bail, trial and family disputes</p></div></div></div>
+      </div>
+    </section>
+
+    <section id="contact" class="border-t border-border bg-background">
+      <div class="mx-auto grid w-full max-w-6xl gap-10 px-5 py-16 md:px-8 lg:grid-cols-12 lg:py-20">
+        <div class="lg:col-span-7"><p class="text-xs uppercase tracking-[0.22em] text-primary">Contact the chambers</p><h2 class="mt-4 max-w-2xl text-balance text-3xl font-heading font-semibold md:text-4xl">Begin with a confidential conversation.</h2><p class="mt-4 max-w-xl text-pretty leading-7 text-muted-foreground">For consultation requests and legal instructions, contact the Chambers directly.</p><a href="tel:9312304964" class="mt-8 inline-flex min-h-11 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground">Call 9312304964 <iconify-icon icon="lucide:phone" class="text-base"></iconify-icon></a></div>
+        <div class="space-y-5 rounded-xl border border-border bg-card p-6 text-card-foreground lg:col-span-5"><div class="flex gap-4"><iconify-icon icon="lucide:map-pin" class="mt-1 text-xl text-primary"></iconify-icon><p class="leading-6">Law Chamber 515, S Block,<br>Delhi High Court, New Delhi</p></div><div class="flex gap-4"><iconify-icon icon="lucide:phone" class="text-xl text-primary"></iconify-icon><a href="tel:9312304964" class="hover:text-primary">9312304964</a></div><div class="flex gap-4"><iconify-icon icon="lucide:mail" class="text-xl text-primary"></iconify-icon><a href="mailto:advkhanshoaib@gmail.com" class="hover:text-primary">advkhanshoaib@gmail.com</a></div></div>
+      </div>
+    </section>
+  </main>
+  <footer class="border-t border-border bg-background"><div class="mx-auto flex w-full max-w-6xl flex-col gap-4 px-5 py-7 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between md:px-8"><div class="flex items-center gap-3"><span class="font-heading text-base font-bold text-primary">CS</span><span>© 2025 The Chambers of Advocate Shoaib Khan</span></div><span>Legal counsel · Litigation · Advocacy</span></div></footer>
+  <a href="https://wa.me/919312304964" target="_blank" rel="noopener noreferrer" aria-label="Chat with Advocate Shoaib Khan on WhatsApp" title="Chat on WhatsApp" class="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full border border-primary bg-background p-1 shadow-md transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background md:bottom-7 md:right-7" role="button"><img src="https://uxmagic.blob.core.windows.net/public/project-documents/6b02c5096cd5d13a3db579b5/6b02cab14acb53a43c82a462/1795346292114-380aa5f8-whatsapp-logo-on-a-transparent-background-free-png.png" alt="WhatsApp" class="h-full w-full rounded-full object-contain"><span class="sr-only">Chat on WhatsApp</span></a>
+</div>
+</body></html>
